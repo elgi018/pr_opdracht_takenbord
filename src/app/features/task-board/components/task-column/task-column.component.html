@@ -1,0 +1,16 @@
+<div class="task-column">
+  <div class="column-header">
+    <h2 class="column-title">{{ status() }}</h2>
+    <span class="task-count">{{ tasks().length }}</span>
+  </div>
+
+  <div class="column-content">
+    @if (tasks().length === 0) {
+    <div class="empty-state">
+      <p>Geen taken</p>
+    </div>
+    } @for (task of tasks(); track task.id) {
+    <app-task-card [task]="task" />
+    }
+  </div>
+</div>

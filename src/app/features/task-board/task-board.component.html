@@ -1,5 +1,7 @@
 <div class="board-content">
   <div class="board-columns">
-    <div class=""></div>
+    <app-task-column [status]="TASK_STATUS.TODO" [tasks]="store.todoTasks()" />
+    <app-task-column [status]="TASK_STATUS.IN_PROGRESS" [tasks]="store.inProgressTasks()" />
+    <app-task-column [status]="TASK_STATUS.DONE" [tasks]="store.doneTasks()" />
   </div>
 </div>
