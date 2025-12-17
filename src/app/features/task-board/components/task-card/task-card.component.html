@@ -13,7 +13,7 @@
       <button
         mat-button
         color="accent"
-        (click)="store.UpdateTaskStatus({ id: task().id, status: TASK_STATUS.TODO })"
+        (click)="onTaskStatusUpdate(TASK_STATUS.TODO)"
         aria-label="Mark as todo"
       >
         ToDo
@@ -22,7 +22,7 @@
       <button
         mat-button
         color="accent"
-        (click)="store.UpdateTaskStatus({ id: task().id, status: TASK_STATUS.IN_PROGRESS })"
+        (click)="onTaskStatusUpdate(TASK_STATUS.IN_PROGRESS)"
         aria-label="Mark as in progress"
       >
         In Progress
@@ -31,7 +31,7 @@
       <button
         mat-button
         color="accent"
-        (click)="store.UpdateTaskStatus({ id: task().id, status: TASK_STATUS.DONE })"
+        (click)="onTaskStatusUpdate(TASK_STATUS.DONE)"
         aria-label="Mark as done"
       >
         Done

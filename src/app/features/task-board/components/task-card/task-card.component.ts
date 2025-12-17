@@ -3,7 +3,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
-import { iTask, TASK_STATUS } from '../../../../core/models/task.model';
+import { iTask, TASK_STATUS, TaskStatus } from '../../../../core/models/task.model';
 import { TaskStore } from '../../store/task.store';
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
 
@@ -33,6 +33,23 @@ export class TaskCardComponent {
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
         this.store.deleteTask({ id: this.task().id });
+      }
+    });
+  }
+
+  onTaskStatusUpdate(status: TaskStatus): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Update Task Status',
+        message: `Are you sure you move "${this.task().title}" to ${this.task().status}?`,
+        confirmText: 'Update Status',
+        cancelText: 'Cancel',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.store.UpdateTaskStatus({ id: this.task().id, status });
       }
     });
   }
