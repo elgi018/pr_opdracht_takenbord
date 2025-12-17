@@ -1,0 +1,20 @@
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .tasksummary-addbutton-container {
+    display: flex;
+    gap: 50px;
+
+    .new-task-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      mat-icon {
+        margin: 0;
+      }
+    }
+  }
+}
