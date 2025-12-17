@@ -1,5 +1,9 @@
-import { iTask } from '../../../core/models/task.model';
-import { signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { computed, inject } from '@angular/core';
+import { iTask, iTaskSummary, TASK_STATUS } from '../../../core/models/task.model';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { pipe, switchMap, tap } from 'rxjs';
+import { TaskApiService } from '../../../core/services/task-api.service';
 
 interface TaskState {
   tasks: iTask[];
@@ -16,6 +20,48 @@ const initialState: TaskState = {
 export const TaskStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withComputed(() => ({})),
-  withMethods(() => ({}))
+  withComputed((store) => ({
+    // Tasks Summary
+    summary: computed((): iTaskSummary => {
+      const tasks = store.tasks();
+      return {
+        todo: tasks.filter((t) => t.status === TASK_STATUS.TODO).length,
+        inProgress: tasks.filter((t) => t.status === TASK_STATUS.IN_PROGRESS).length,
+        done: tasks.filter((t) => t.status === TASK_STATUS.DONE).length,
+      };
+    }),
+
+    // Group Tasks by status
+    todoTasks: computed(() => store.tasks().filter((t) => t.status === TASK_STATUS.TODO)),
+    inProgressTasks: computed(() =>
+      store.tasks().filter((t) => t.status === TASK_STATUS.IN_PROGRESS)
+    ),
+    doneTasks: computed(() => store.tasks().filter((t) => t.status === TASK_STATUS.DONE)),
+  })),
+  withMethods((store) => {
+    const apiService = inject(TaskApiService);
+    return {
+      // Get All Tasks
+      getTasks: rxMethod<void>(
+        pipe(
+          tap(() => patchState(store, { loading: true, error: null })),
+          switchMap(() => apiService.getAllTasks()),
+          tap({
+            next: (tasks) => patchState(store, { tasks, loading: false }),
+            error: (error) =>
+              patchState(store, {
+                error: error.message || 'Failed fetching tasks',
+                loading: false,
+              }),
+          })
+        )
+      ),
+
+      // Add new Task
+
+      // Update Task
+
+      // Delete Task
+    };
+  })
 );

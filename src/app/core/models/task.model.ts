@@ -14,3 +14,9 @@ export interface iTask {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface iTaskSummary {
+  todo: number;
+  inProgress: number;
+  done: number;
+}
