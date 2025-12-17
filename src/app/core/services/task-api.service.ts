@@ -60,6 +60,20 @@ export class TaskApiService {
     return of(updatedTask).pipe(delay(this.DELAY_MS));
   }
 
+  deleteTask(id: string): Observable<string> {
+    const tasks = this.getTasks();
+    const taskExists = tasks.some((t) => t.id === id);
+
+    if (!taskExists) {
+      throw new Error('Task not found!');
+    }
+
+    const updatedTasks = tasks.filter((t) => t.id !== id);
+    this.saveTasks(updatedTasks);
+
+    return of(id).pipe(delay(this.DELAY_MS));
+  }
+
   private saveTasks(tasks: iTask[]): void {
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(tasks));

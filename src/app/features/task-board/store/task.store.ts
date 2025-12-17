@@ -86,6 +86,23 @@ export const TaskStore = signalStore(
       ),
 
       // Delete Task
+      deleteTask: rxMethod<{ id: string }>(
+        pipe(
+          tap(() => patchState(store, { loading: true, error: null })),
+          switchMap(({ id }) => apiService.deleteTask(id)),
+          tap({
+            next: (id) => {
+              const updatedTasks = store.tasks().filter((task) => task.id !== id);
+              patchState(store, { tasks: updatedTasks, loading: false });
+            },
+            error: (error) =>
+              patchState(store, {
+                error: error.message || 'Failed deleting task',
+                loading: false,
+              }),
+          })
+        )
+      ),
     };
   })
 );
