@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { TaskStore } from '../task-board/store/task.store';
 
 @Component({
   selector: 'app-task-summary',
@@ -7,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './task-summary.component.scss',
 })
 export class TaskSummaryComponent {
-
+  readonly store = inject(TaskStore);
 }

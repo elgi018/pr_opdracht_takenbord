@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { TaskStore } from './store/task.store';
 
 @Component({
   selector: 'app-task-board',
@@ -6,6 +7,10 @@ import { Component } from '@angular/core';
   templateUrl: './task-board.component.html',
   styleUrl: './task-board.component.scss',
 })
-export class TaskBoardComponent {
+export class TaskBoardComponent implements OnInit {
+  readonly store = inject(TaskStore);
 
+  ngOnInit(): void {
+    this.store.getTasks();
+  }
 }

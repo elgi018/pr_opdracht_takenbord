@@ -1,5 +1,8 @@
 <div class="summary-container">
-  <p>To Do: 5</p>
-  <p>In Progress: 5</p>
-  <p>Done: 5</p>
+  <p>To Do:</p>
+  {{ store.summary().todo }}
+  <p>In Progress:</p>
+  {{ store.summary().inProgress }}
+  <p>Done:</p>
+  {{ store.summary().done }}
 </div>
