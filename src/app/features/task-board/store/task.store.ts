@@ -1,5 +1,5 @@
 import { computed, inject } from '@angular/core';
-import { iTask, iTaskSummary, TASK_STATUS } from '../../../core/models/task.model';
+import { iTask, iTaskSummary, TASK_STATUS, TaskStatus } from '../../../core/models/task.model';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
@@ -60,6 +60,30 @@ export const TaskStore = signalStore(
       // Add new Task
 
       // Update Task
+
+      // Update Task Status
+      UpdateTaskStatus: rxMethod<{ id: string; status: TaskStatus }>(
+        pipe(
+          tap(() => patchState(store, { loading: true, error: null })),
+          switchMap(({ id, status }) =>
+            apiService.updateTaskStatus(id, status).pipe(
+              tap({
+                next: (updatedTask) => {
+                  const updatedTasks = store
+                    .tasks()
+                    .map((task) => (task.id === id ? updatedTask : task));
+                  patchState(store, { tasks: updatedTasks, loading: false });
+                },
+                error: (error) =>
+                  patchState(store, {
+                    error: error.message || 'Failed updating task status',
+                    loading: false,
+                  }),
+              })
+            )
+          )
+        )
+      ),
 
       // Delete Task
     };

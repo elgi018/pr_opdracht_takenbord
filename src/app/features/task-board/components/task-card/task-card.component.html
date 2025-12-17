@@ -6,4 +6,44 @@
   <mat-card-content>
     <p class="task-description">{{ task().description }}</p>
   </mat-card-content>
+
+  <mat-card-footer class="card-footer">
+    <div class="status-buttons">
+      @if(task().status !== TASK_STATUS.TODO){
+      <button
+        mat-button
+        color="accent"
+        (click)="store.UpdateTaskStatus({ id: task().id, status: TASK_STATUS.TODO })"
+        aria-label="Mark as todo"
+      >
+        ToDo
+      </button>
+      } @if(task().status !== TASK_STATUS.IN_PROGRESS){
+      <button
+        mat-button
+        color="accent"
+        (click)="store.UpdateTaskStatus({ id: task().id, status: TASK_STATUS.IN_PROGRESS })"
+        aria-label="Mark as in progress"
+      >
+        In Progress
+      </button>
+      } @if(task().status !== TASK_STATUS.DONE){
+      <button
+        mat-button
+        color="accent"
+        (click)="store.UpdateTaskStatus({ id: task().id, status: TASK_STATUS.DONE })"
+        aria-label="Mark as done"
+      >
+        Done
+      </button>
+      }
+    </div>
+
+    <button mat-icon-button color="primary" aria-label="Edit task">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button color="warn" aria-label="Delete task">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </mat-card-footer>
 </mat-card>

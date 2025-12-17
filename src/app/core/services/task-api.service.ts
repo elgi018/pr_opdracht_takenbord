@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { iTask, TASK_STATUS } from '../models/task.model';
+import { iTask, TASK_STATUS, TaskStatus } from '../models/task.model';
 import { delay, Observable, of } from 'rxjs';
 
 @Injectable({
@@ -38,6 +38,26 @@ export class TaskApiService {
       console.error('Error reading tasks from localStorage:', error);
       return [];
     }
+  }
+
+  updateTaskStatus(id: string, status: TaskStatus): Observable<iTask> {
+    const tasks = this.getTasks();
+    const task = tasks.find((t) => t.id === id);
+
+    if (!task) {
+      throw new Error('Task not found!');
+    }
+
+    const updatedTask: iTask = {
+      ...task,
+      status,
+      updatedAt: new Date(),
+    };
+
+    const updatedTasks = tasks.map((t) => (t.id === id ? updatedTask : t));
+    this.saveTasks(updatedTasks);
+
+    return of(updatedTask).pipe(delay(this.DELAY_MS));
   }
 
   private saveTasks(tasks: iTask[]): void {

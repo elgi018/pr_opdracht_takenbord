@@ -48,3 +48,14 @@
   line-height: 1.5;
   word-wrap: break-word;
 }
+
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 5px;
+}
+
+.status-buttons {
+  display: flex;
+  padding-right: 20px;
+}
