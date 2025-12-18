@@ -1,5 +1,11 @@
 import { computed, inject } from '@angular/core';
-import { iTask, iTaskSummary, TASK_STATUS, TaskStatus } from '../../../core/models/task.model';
+import {
+  CreateTaskDto,
+  iTask,
+  iTaskSummary,
+  TASK_STATUS,
+  TaskStatus,
+} from '../../../core/models/task.model';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
@@ -58,6 +64,23 @@ export const TaskStore = signalStore(
       ),
 
       // Add new Task
+      createNewTask: rxMethod<CreateTaskDto>(
+        pipe(
+          tap(() => patchState(store, { loading: true, error: null })),
+          switchMap((data) => apiService.createTask(data)),
+          tap({
+            next: (newTask) => {
+              const tasks = [...store.tasks(), newTask];
+              patchState(store, { tasks, loading: false });
+            },
+            error: (error) =>
+              patchState(store, {
+                error: error.message || 'Failed to create task',
+                loading: false,
+              }),
+          })
+        )
+      ),
 
       // Update Task
 

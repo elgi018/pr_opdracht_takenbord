@@ -4,7 +4,7 @@
 
     <div class="tasksummary-addbutton-container">
       <app-task-summary></app-task-summary>
-      <button mat-raised-button color="primary" class="new-task-button">
+      <button mat-raised-button color="primary" (click)="onNewTask()" class="new-task-button">
         <mat-icon>add</mat-icon>
         Nieuwe Taak
       </button>

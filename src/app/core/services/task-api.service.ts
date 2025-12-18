@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { iTask, TASK_STATUS, TaskStatus } from '../models/task.model';
+import { CreateTaskDto, iTask, TASK_STATUS, TaskStatus } from '../models/task.model';
 import { delay, Observable, of } from 'rxjs';
 
 @Injectable({
@@ -7,7 +7,7 @@ import { delay, Observable, of } from 'rxjs';
 })
 export class TaskApiService {
   private readonly STORAGE_KEY = 'TASKS';
-  private readonly DELAY_MS = 500;
+  private readonly DELAY_MS = 1000;
 
   constructor() {
     // Initialize with some demo tasks if storage is empty
@@ -38,6 +38,24 @@ export class TaskApiService {
       console.error('Error reading tasks from localStorage:', error);
       return [];
     }
+  }
+
+  createTask(data: CreateTaskDto): Observable<iTask> {
+    const tasks = this.getTasks();
+
+    const newTask: iTask = {
+      id: crypto.randomUUID(),
+      title: data.title,
+      description: data.description,
+      status: TASK_STATUS.TODO,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    tasks.push(newTask);
+    this.saveTasks(tasks);
+
+    return of(newTask).pipe(delay(this.DELAY_MS));
   }
 
   updateTaskStatus(id: string, status: TaskStatus): Observable<iTask> {

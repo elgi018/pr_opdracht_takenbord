@@ -1,7 +1,7 @@
 export const TASK_STATUS = {
-  TODO: 'todo',
-  IN_PROGRESS: 'in_progress',
-  DONE: 'done',
+  TODO: 'To Do',
+  IN_PROGRESS: 'In Progress',
+  DONE: 'Done',
 } as const;
 
 export type TaskStatus = (typeof TASK_STATUS)[keyof typeof TASK_STATUS];
@@ -19,4 +19,26 @@ export interface iTaskSummary {
   todo: number;
   inProgress: number;
   done: number;
+}
+
+export interface TaskFormDialogData {
+  task?: iTask;
+  mode: 'create' | 'edit';
+}
+
+export interface TaskFormDialogResult {
+  data: CreateTaskDto | UpdateTaskDto;
+  mode: 'create' | 'edit';
+  taskId?: string;
+}
+
+export interface CreateTaskDto {
+  title: string;
+  description: string;
+}
+
+export interface UpdateTaskDto {
+  title?: string;
+  description?: string;
+  status?: TaskStatus;
 }
