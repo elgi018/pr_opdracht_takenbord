@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CreateTaskDto, iTask, TASK_STATUS, TaskStatus } from '../models/task.model';
+import { CreateTaskDto, iTask, TASK_STATUS, TaskStatus, UpdateTaskDto } from '../models/task.model';
 import { delay, Observable, of } from 'rxjs';
 
 @Injectable({
@@ -47,7 +47,7 @@ export class TaskApiService {
       id: crypto.randomUUID(),
       title: data.title,
       description: data.description,
-      status: TASK_STATUS.TODO,
+      status: data.status,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -56,6 +56,28 @@ export class TaskApiService {
     this.saveTasks(tasks);
 
     return of(newTask).pipe(delay(this.DELAY_MS));
+  }
+
+  updateTask(id: string, data: UpdateTaskDto): Observable<iTask | null> {
+    const tasks = this.getTasks();
+    const task = tasks.find((t) => t.id === id);
+
+    if (!task) {
+      throw new Error('Task not found!');
+    }
+
+    const updatedTask: iTask = {
+      id,
+      title: data.title || task.title,
+      description: data.description || task.description,
+      status: data.status || task.status,
+      createdAt: task.createdAt,
+      updatedAt: new Date(),
+    };
+
+    const updatedTasks = tasks.map((t) => (t.id === id ? updatedTask : t));
+    this.saveTasks(updatedTasks);
+    return of(updatedTask).pipe(delay(this.DELAY_MS));
   }
 
   updateTaskStatus(id: string, status: TaskStatus): Observable<iTask> {

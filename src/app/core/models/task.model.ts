@@ -4,6 +4,7 @@ export const TASK_STATUS = {
   DONE: 'Done',
 } as const;
 
+export const TASK_STATUS_VALUES = Object.values(TASK_STATUS);
 export type TaskStatus = (typeof TASK_STATUS)[keyof typeof TASK_STATUS];
 
 export interface iTask {
@@ -35,6 +36,7 @@ export interface TaskFormDialogResult {
 export interface CreateTaskDto {
   title: string;
   description: string;
+  status: TaskStatus;
 }
 
 export interface UpdateTaskDto {

@@ -5,6 +5,7 @@ import {
   iTaskSummary,
   TASK_STATUS,
   TaskStatus,
+  UpdateTaskDto,
 } from '../../../core/models/task.model';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -83,6 +84,32 @@ export const TaskStore = signalStore(
       ),
 
       // Update Task
+      updateTask: rxMethod<{ id: string; data: UpdateTaskDto }>(
+        pipe(
+          tap(() => patchState(store, { loading: true, error: null })),
+          switchMap(({ id, data }) => apiService.updateTask(id, data)),
+          tap({
+            next: (updatedTask) => {
+              if (updatedTask) {
+                const tasks = store
+                  .tasks()
+                  .map((task) => (task.id === updatedTask.id ? updatedTask : task));
+                patchState(store, { tasks, loading: false });
+              } else {
+                patchState(store, {
+                  error: 'Task not found',
+                  loading: false,
+                });
+              }
+            },
+            error: (error) =>
+              patchState(store, {
+                error: error.message || 'Failed to update task',
+                loading: false,
+              }),
+          })
+        )
+      ),
 
       // Update Task Status
       UpdateTaskStatus: rxMethod<{ id: string; status: TaskStatus }>(

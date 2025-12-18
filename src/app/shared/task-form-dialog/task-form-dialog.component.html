@@ -17,6 +17,15 @@
         required
       ></textarea>
     </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status" required>
+        @for (status of statusOptions; track status) {
+        <mat-option [value]="status">{{ status }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
   </form>
 </mat-dialog-content>
 
