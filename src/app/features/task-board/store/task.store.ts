@@ -11,6 +11,7 @@ import { patchState, signalStore, withComputed, withMethods, withState } from '@
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 import { TaskApiService } from '../../../core/services/task-api.service';
+import { createAsyncOperation } from '../../../core/utils/store.helpers';
 
 interface TaskState {
   tasks: iTask[];
@@ -50,108 +51,150 @@ export const TaskStore = signalStore(
     return {
       // Get All Tasks
       getTasks: rxMethod<void>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap(() => apiService.getAllTasks()),
-          tap({
-            next: (tasks) => patchState(store, { tasks, loading: false }),
-            error: (error) =>
-              patchState(store, {
-                error: error.message || 'Failed fetching tasks',
-                loading: false,
-              }),
-          })
-        )
+        createAsyncOperation({
+          store,
+          apiCall: () => apiService.getAllTasks(),
+          onSuccess: (tasks) => ({ tasks }),
+          errorMessage: 'Failed fetching tasks',
+        })
+        // pipe(
+        //   tap(() => patchState(store, { loading: true, error: null })),
+        //   switchMap(() => apiService.getAllTasks()),
+        //   tap({
+        //     next: (tasks) => patchState(store, { tasks, loading: false }),
+        //     error: (error) =>
+        //       patchState(store, {
+        //         error: error.message || 'Failed fetching tasks',
+        //         loading: false,
+        //       }),
+        //   })
+        // )
       ),
 
       // Add new Task
       createNewTask: rxMethod<CreateTaskDto>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap((data) => apiService.createTask(data)),
-          tap({
-            next: (newTask) => {
-              const tasks = [...store.tasks(), newTask];
-              patchState(store, { tasks, loading: false });
-            },
-            error: (error) =>
-              patchState(store, {
-                error: error.message || 'Failed to create task',
-                loading: false,
-              }),
-          })
-        )
+        createAsyncOperation({
+          store,
+          apiCall: (data) => apiService.createTask(data),
+          onSuccess: (newTask) => ({ tasks: [...store.tasks(), newTask] }),
+          errorMessage: 'Failed to create task',
+        })
+        // pipe(
+        //   tap(() => patchState(store, { loading: true, error: null })),
+        //   switchMap((data) => apiService.createTask(data)),
+        //   tap({
+        //     next: (newTask) => {
+        //       const tasks = [...store.tasks(), newTask];
+        //       patchState(store, { tasks, loading: false });
+        //     },
+        //     error: (error) =>
+        //       patchState(store, {
+        //         error: error.message || 'Failed to create task',
+        //         loading: false,
+        //       }),
+        //   })
+        // )
       ),
 
       // Update Task
       updateTask: rxMethod<{ id: string; data: UpdateTaskDto }>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap(({ id, data }) => apiService.updateTask(id, data)),
-          tap({
-            next: (updatedTask) => {
-              if (updatedTask) {
-                const tasks = store
-                  .tasks()
-                  .map((task) => (task.id === updatedTask.id ? updatedTask : task));
-                patchState(store, { tasks, loading: false });
-              } else {
-                patchState(store, {
-                  error: 'Task not found',
-                  loading: false,
-                });
-              }
-            },
-            error: (error) =>
-              patchState(store, {
-                error: error.message || 'Failed to update task',
-                loading: false,
-              }),
-          })
-        )
+        createAsyncOperation({
+          store,
+          apiCall: ({ id, data }) => apiService.updateTask(id, data),
+          onSuccess: (updatedTask) => {
+            if (!updatedTask) return { error: 'Task not found' };
+            const tasks = store
+              .tasks()
+              .map((task) => (task.id === updatedTask.id ? updatedTask : task));
+            return { tasks };
+          },
+          errorMessage: 'Failed to update task',
+        })
+        // pipe(
+        //   tap(() => patchState(store, { loading: true, error: null })),
+        //   switchMap(({ id, data }) => apiService.updateTask(id, data)),
+        //   tap({
+        //     next: (updatedTask) => {
+        //       if (updatedTask) {
+        //         const tasks = store
+        //           .tasks()
+        //           .map((task) => (task.id === updatedTask.id ? updatedTask : task));
+        //         patchState(store, { tasks, loading: false });
+        //       } else {
+        //         patchState(store, {
+        //           error: 'Task not found',
+        //           loading: false,
+        //         });
+        //       }
+        //     },
+        //     error: (error) =>
+        //       patchState(store, {
+        //         error: error.message || 'Failed to update task',
+        //         loading: false,
+        //       }),
+        //   })
+        // )
       ),
 
       // Update Task Status
       UpdateTaskStatus: rxMethod<{ id: string; status: TaskStatus }>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap(({ id, status }) =>
-            apiService.updateTaskStatus(id, status).pipe(
-              tap({
-                next: (updatedTask) => {
-                  const updatedTasks = store
-                    .tasks()
-                    .map((task) => (task.id === id ? updatedTask : task));
-                  patchState(store, { tasks: updatedTasks, loading: false });
-                },
-                error: (error) =>
-                  patchState(store, {
-                    error: error.message || 'Failed updating task status',
-                    loading: false,
-                  }),
-              })
-            )
-          )
-        )
+        createAsyncOperation({
+          store,
+          apiCall: ({ id, status }) => apiService.updateTaskStatus(id, status),
+          onSuccess: (updatedTask) => {
+            if (!updatedTask) return { error: 'Task not found' };
+            const tasks = store
+              .tasks()
+              .map((task) => (task.id === updatedTask.id ? updatedTask : task));
+            return { tasks };
+          },
+          errorMessage: 'Failed updating task status',
+        })
+        // pipe(
+        //   tap(() => patchState(store, { loading: true, error: null })),
+        //   switchMap(({ id, status }) =>
+        //     apiService.updateTaskStatus(id, status).pipe(
+        //       tap({
+        //         next: (updatedTask) => {
+        //           const updatedTasks = store
+        //             .tasks()
+        //             .map((task) => (task.id === id ? updatedTask : task));
+        //           patchState(store, { tasks: updatedTasks, loading: false });
+        //         },
+        //         error: (error) =>
+        //           patchState(store, {
+        //             error: error.message || 'Failed updating task status',
+        //             loading: false,
+        //           }),
+        //       })
+        //     )
+        //   )
+        // )
       ),
 
       // Delete Task
       deleteTask: rxMethod<{ id: string }>(
-        pipe(
-          tap(() => patchState(store, { loading: true, error: null })),
-          switchMap(({ id }) => apiService.deleteTask(id)),
-          tap({
-            next: (id) => {
-              const updatedTasks = store.tasks().filter((task) => task.id !== id);
-              patchState(store, { tasks: updatedTasks, loading: false });
-            },
-            error: (error) =>
-              patchState(store, {
-                error: error.message || 'Failed deleting task',
-                loading: false,
-              }),
-          })
-        )
+        createAsyncOperation({
+          store,
+          apiCall: ({ id }) => apiService.deleteTask(id),
+          onSuccess: (id) => ({ tasks: store.tasks().filter((task) => task.id !== id) }),
+          errorMessage: 'Failed deleting task',
+        })
+        // pipe(
+        //   tap(() => patchState(store, { loading: true, error: null })),
+        //   switchMap(({ id }) => apiService.deleteTask(id)),
+        //   tap({
+        //     next: (id) => {
+        //       const updatedTasks = store.tasks().filter((task) => task.id !== id);
+        //       patchState(store, { tasks: updatedTasks, loading: false });
+        //     },
+        //     error: (error) =>
+        //       patchState(store, {
+        //         error: error.message || 'Failed deleting task',
+        //         loading: false,
+        //       }),
+        //   })
+        // )
       ),
     };
   })
