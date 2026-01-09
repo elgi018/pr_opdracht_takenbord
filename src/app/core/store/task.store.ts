@@ -6,12 +6,12 @@ import {
   TASK_STATUS,
   TaskStatus,
   UpdateTaskDto,
-} from '../../../core/models/task.model';
+} from '../models/task.model';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
-import { TaskApiService } from '../../../core/services/task-api.service';
-import { createAsyncOperation } from '../../../core/utils/store.helpers';
+import { TaskApiService } from '../services/task-api.service';
+import { createAsyncOperation } from '../utils/store.helpers';
 
 interface TaskState {
   tasks: iTask[];

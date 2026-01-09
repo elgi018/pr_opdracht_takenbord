@@ -3,8 +3,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
-import { iTask, TASK_STATUS, TaskStatus, TaskFormDialogData, TaskFormDialogResult } from '../../../../core/models/task.model';
-import { TaskStore } from '../../store/task.store';
+import {
+  iTask,
+  TASK_STATUS,
+  TaskStatus,
+  TaskFormDialogData,
+  TaskFormDialogResult,
+} from '../../../../core/models/task.model';
+import { TaskStore } from '../../../../core/store/task.store';
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
 import { TaskFormDialogComponent } from '../../../../shared/task-form-dialog/task-form-dialog.component';
 

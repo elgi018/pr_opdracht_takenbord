@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { TaskStore } from '../../features/task-board/store/task.store';
+import { TaskStore } from '../../core/store/task.store';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({

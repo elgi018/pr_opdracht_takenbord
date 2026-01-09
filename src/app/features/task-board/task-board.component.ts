@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { TaskStore } from './store/task.store';
+import { TaskStore } from '../../core/store/task.store';
 import { TaskColumnComponent } from './components/task-column/task-column.component';
 import {
   iTask,

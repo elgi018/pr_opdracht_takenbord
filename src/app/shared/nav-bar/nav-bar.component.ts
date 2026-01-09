@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TaskSummaryComponent } from '../../features/task-summary/task-summary.component';
-import { TaskStore } from '../../features/task-board/store/task.store';
+import { TaskStore } from '../../core/store/task.store';
 import { MatDialog } from '@angular/material/dialog';
 import {
   CreateTaskDto,

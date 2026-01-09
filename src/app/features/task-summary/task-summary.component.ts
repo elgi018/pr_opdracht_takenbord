@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { TaskStore } from '../task-board/store/task.store';
+import { TaskStore } from '../../core/store/task.store';
 
 @Component({
   selector: 'app-task-summary',
